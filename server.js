@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 const app = express();
 
-mongoose.connect('mongodb://localhost:27017/mi_basededatos', {
+mongoose.connect('mongodb+srv://ibarra:<bateriavoladora>@cluster0.swolzds.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }).then(() => console.log('✅ Conectado a MongoDB'))
