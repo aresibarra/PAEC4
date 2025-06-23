@@ -5,7 +5,7 @@ const app = express();
 
 const mongoose = require('mongoose');
 
-const uri = 'mongodb+srv://usuario:contraseña@cluster0.xxxxx.mongodb.net/mi_base_de_datos';
+const uri = 'mongodb+srv://<db_username>:<mantequilla23>@cluster0.fnwznjh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 
 mongoose.connect(uri)
   .then(() => console.log('✅ Conexión exitosa a MongoDB'))
