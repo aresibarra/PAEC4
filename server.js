@@ -3,11 +3,14 @@ const mongoose = require('mongoose');
 const path = require('path');
 const app = express();
 
-mongoose.connect('mongodb+srv://ibarra:<bateriavoladora>@cluster0.swolzds.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(() => console.log('✅ Conectado a MongoDB'))
-  .catch(err => console.error('❌ Error de conexión', err));
+const mongoose = require('mongoose');
+
+const uri = 'mongodb+srv://usuario:contraseña@cluster0.xxxxx.mongodb.net/mi_base_de_datos';
+
+mongoose.connect(uri)
+  .then(() => console.log('✅ Conexión exitosa a MongoDB'))
+  .catch(err => console.error('❌ Error de conexión a MongoDB:', err));
+
 
 // Definir el esquema y modelo para Material
 const Material = mongoose.model('Material', new mongoose.Schema({
