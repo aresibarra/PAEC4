@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gestión de Material Reutilizado</title>
+  <style>
+    /* General styles */
+    * {
+      box-sizing: border-box;
+      font-family: 'Roboto', sans-serif; /* Changed font */
+    }
+
+    body {
+      margin: 0;
+      background: #eef2f6; /* Lighter, subtle background */
+      color: #333;
+      line-height: 1.6;
+    }
+
+    /* Header */
+    header {
+      background-color: #007bff; /* Primary blue */
+      color: white;
+      padding: 30px 0; /* More padding */
+      text-align: center;
+      font-size: 2.5em; /* Larger font */
+      margin-bottom: 30px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    }
+
+    /* Main container */
+    main {
+      max-width: 960px; /* Wider main area */
+      margin: 40px auto;
+      padding: 30px;
+      background: #ffffff;
+      border-radius: 15px; /* More rounded corners */
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Stronger shadow */
+    }
+
+    /* Buttons container */
+    .botones {
+      text-align: center;
+      margin-bottom: 40px; /* More space below buttons */
+    }
+
+    /* Toggle buttons */
+    .toggle {
+      background-color: #28a745; /* Green for action buttons */
+      color: white;
+      border: none;
+      padding: 15px 30px; /* Larger buttons */
+      margin: 0 15px;
+      font-size: 1.2em; /* Larger font */
+      border-radius: 10px; /* More rounded */
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth hover effects */
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1); /* Subtle button shadow */
+    }
+
+    .toggle:hover {
+      background-color: #218838; /* Darker green on hover */
+      transform: translateY(-2px); /* Slight lift effect */
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+    }
+
+    /* Forms */
+    .formulario {
+      display: none;
+      padding: 30px;
+      border: 1px solid #dcdcdc; /* Lighter border */
+      border-radius: 12px;
+      margin-top: 30px;
+      background-color: #fcfcfc; /* Very light background */
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05); /* Inner shadow */
+    }
+
+    .formulario.activo {
+      display: block;
+    }
+
+    .formulario h2 {
+      color: #007bff; /* Primary blue heading */
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2em;
+    }
+
+    .formulario label {
+      display: block;
+      margin-bottom: 12px;
+      font-weight: 600; /* Bolder labels */
+      color: #555;
+    }
+
+    .formulario input,
+    .formulario select {
+      width: calc(100% - 24px); /* Adjusted width */
+      padding: 14px; /* More padding */
+      margin-bottom: 25px; /* More space below inputs */
+      border: 1px solid #ced4da; /* Bootstrap-like border */
+      border-radius: 8px; /* Rounded inputs */
+      font-size: 1.05em;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .formulario input:focus,
+    .formulario select:focus {
+      border-color: #007bff; /* Blue border on focus */
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Focus shadow */
+      outline: none;
+    }
+
+    .formulario button[type="submit"] {
+      background-color: #17a2b8; /* Info blue for submit buttons */
+      color: white;
+      border: none;
+      padding: 16px 30px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1.1em;
+      width: 100%;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .formulario button[type="submit"]:hover {
+      background-color: #138496; /* Darker blue on hover */
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    /* List of Materials */
+    #listaMateriales {
+      margin-top: 50px;
+      padding: 30px;
+      border: 1px solid #dcdcdc;
+      border-radius: 12px;
+      background-color: #ffffff;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    #listaMateriales h2 {
+      color: #007bff;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2em;
+    }
+
+    /* Table styles */
+    #tablaMateriales {
+      width: 100%;
+      border-collapse: separate; /* Use separate to allow border-radius on cells */
+      border-spacing: 0; /* Remove default spacing */
+      margin-top: 25px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+      border-radius: 10px; /* Rounded table */
+      overflow: hidden; /* Ensures border-radius is visible */
+    }
+
+    #tablaMateriales th,
+    #tablaMateriales td {
+      padding: 18px; /* More padding in cells */
+      text-align: left;
+      border-bottom: 1px solid #ececec; /* Light border between rows */
+      border-right: 1px solid #ececec; /* Light border between columns */
+    }
+
+    #tablaMateriales th {
+      background-color: #007bff; /* Header background */
+      color: white;
+      font-weight: 700; /* Bolder header text */
+      text-transform: uppercase;
+      letter-spacing: 0.08em; /* More spacing */
+      position: sticky; /* Keep header visible on scroll */
+      top: 0;
+    }
+
+    /* Remove last column border */
+    #tablaMateriales th:last-child,
+    #tablaMateriales td:last-child {
+      border-right: none;
+    }
+
+    /* Rounded corners for first/last header cells */
+    #tablaMateriales th:first-child {
+        border-top-left-radius: 10px;
+    }
+
+    #tablaMateriales th:last-child {
+        border-top-right-radius: 10px;
+    }
+
+    #tablaMateriales tbody tr:last-child td:first-child {
+        border-bottom-left-radius: 10px;
+    }
+
+    #tablaMateriales tbody tr:last-child td:last-child {
+        border-bottom-right-radius: 10px;
+    }
+
+    #tablaMateriales tbody tr:nth-child(even) {
+      background-color: #f8faff; /* Lighter alternating row color */
+    }
+
+    #tablaMateriales tbody tr:hover {
+      background-color: #e6f2ff; /* Light blue on hover */
+      transition: background-color 0.2s ease-in-out;
+    }
+
+    /* Messages */
+    .mensaje {
+      text-align: center;
+      margin-top: 35px;
+      font-size: 1.2em;
+      color: #666;
+      padding: 15px;
+      background-color: #fff3cd; /* Warning-like background */
+      border: 1px solid #ffeeba;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Gestión de Material Reutilizado</h1>
+  </header>
+  <main>
+    <div class="botones">
+      <button class="toggle" data-target="formAgregar">Agregar Material</button>
+      <button class="toggle" data-target="formActualizar">Actualizar Material</button>
+      <button class="toggle" data-target="formEliminar">Eliminar Material</button>
+    </div>
+
+    <div id="formAgregar" class="formulario">
+      <h2>Agregar Material</h2>
+      <form>
+        <label for="nombrePersonaAgregar">Nombre de la Persona:</label>
+        <input type="text" id="nombrePersonaAgregar" required />
+
+        <label for="tipoMaterialAgregar">Tipo de Material:</label>
+        <select id="tipoMaterialAgregar" required>
+          <option value="">Seleccione un tipo</option>
+          <option value="plástico">Plástico</option>
+          <option value="papel">Papel</option>
+          <option value="vidrio">Vidrio</option>
+          <option value="metal">Metal</option>
+          <option value="otros">Otros</option>
+        </select>
+
+        <label for="cantidadAgregar">Cantidad:</label>
+        <input type="number" id="cantidadAgregar" required />
+
+        <label for="diaAgregar">Día:</label>
+        <select id="diaAgregar" required>
+          <option value="">Seleccione un día</option>
+          <option value="Lunes">Lunes</option>
+          <option value="Martes">Martes</option>
+          <option value="Miércoles">Miércoles</option>
+          <option value="Jueves">Jueves</option>
+          <option value="Viernes">Viernes</option>
+          <option value="Sábado">Sábado</option>
+          <option value="Domingo">Domingo</option>
+        </select>
+
+        <label for="fechaAgregar">Fecha:</label>
+        <input type="date" id="fechaAgregar" required />
+
+        <label for="puntoRecoleccionAgregar">Punto de Recolección:</label>
+        <select id="puntoRecoleccionAgregar" required>
+          <option value="">Seleccione un punto</option>
+          <option value="Entrada Principal">Entrada Principal</option>
+          <option value="Biblioteca">Biblioteca</option>
+          <option value="Cafetería">Cafetería</option>
+          <option value="Edificio A">Edificio A</option>
+          <option value="Edificio B">Edificio B</option>
+        </select>
+
+        <button type="submit">Agregar Material</button>
+      </form>
+    </div>
+
+    <div id="formActualizar" class="formulario">
+      <h2>Actualizar Material</h2>
+      <form>
+        <label for="nombrePersonaActualizar">Nombre de la Persona (a actualizar):</label>
+        <input type="text" id="nombrePersonaActualizar" required />
+
+        <label for="tipoMaterialActualizar">Tipo de Material (a actualizar):</label>
+        <select id="tipoMaterialActualizar" required>
+          <option value="">Seleccione un tipo</option>
+          <option value="plástico">Plástico</option>
+          <option value="papel">Papel</option>
+          <option value="vidrio">Vidrio</option>
+          <option value="metal">Metal</option>
+          <option value="otros">Otros</option>
+        </select>
+
+        <label for="cantidadActualizar">Nueva Cantidad:</label>
+        <input type="number" id="cantidadActualizar" required />
+
+        <label for="diaActualizar">Nuevo Día:</label>
+        <select id="diaActualizar" required>
+          <option value="">Seleccione un día</option>
+          <option value="Lunes">Lunes</option>
+          <option value="Martes">Martes</option>
+          <option value="Miércoles">Miércoles</option>
+          <option value="Jueves">Jueves</option>
+          <option value="Viernes">Viernes</option>
+          <option value="Sábado">Sábado</option>
+          <option value="Domingo">Domingo</option>
+        </select>
+
+        <label for="fechaActualizar">Nueva Fecha:</label>
+        <input type="date" id="fechaActualizar" required />
+
+        <label for="puntoRecoleccionActualizar">Nuevo Punto de Recolección:</label>
+        <select id="puntoRecoleccionActualizar" required>
+          <option value="">Seleccione un punto</option>
+          <option value="Entrada Principal">Entrada Principal</option>
+          <option value="Biblioteca">Biblioteca</option>
+          <option value="Cafetería">Cafetería</option>
+          <option value="Edificio A">Edificio A</option>
+          <option value="Edificio B">Edificio B</option>
+        </select>
+
+        <button type="submit">Actualizar Material</button>
+      </form>
+    </div>
+
+    <div id="formEliminar" class="formulario">
+      <h2>Eliminar Material</h2>
+      <form>
+        <label for="nombrePersonaEliminar">Nombre de la Persona (a eliminar):</label>
+        <input type="text" id="nombrePersonaEliminar" required />
+
+        <label for="tipoMaterialEliminar">Tipo de Material (a eliminar):</label>
+        <select id="tipoMaterialEliminar" required>
+          <option value="">Seleccione un tipo</option>
+          <option value="plástico">Plástico</option>
+          <option value="papel">Papel</option>
+          <option value="vidrio">Vidrio</option>
+          <option value="metal">Metal</option>
+          <option value="otros">Otros</option>
+        </select>
+        <button type="submit">Eliminar Material</button>
+      </form>
+    </div>
+
+    <div id="listaMateriales">
+      <h2>Materiales Registrados</h2>
+      <table id="tablaMateriales">
+        <thead>
+          <tr>
+            <th>Nombre Persona</th>
+            <th>Tipo Material</th>
+            <th>Cantidad</th>
+            <th>Día</th>
+            <th>Fecha</th>
+            <th>Punto Recolección</th>
+          </tr>
+        </thead>
+        <tbody>
+          </tbody>
+      </table>
+      <p id="mensajeLista" class="mensaje"></p>
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggles = document.querySelectorAll('.toggle');
+      const forms = document.querySelectorAll('.formulario');
+      const tablaMaterialesBody = document.querySelector('#tablaMateriales tbody');
+      const mensajeLista = document.getElementById('mensajeLista');
+
+      toggles.forEach(button => {
+        button.addEventListener('click', () => {
+          const targetId = button.dataset.target;
+          forms.forEach(form => {
+            form.classList.remove('activo');
+          });
+          document.getElementById(targetId).classList.add('activo');
+        });
+      });
+
+      async function cargarMateriales() {
+        try {
+          const res = await fetch('/api/materiales');
+          const materiales = await res.json();
+          tablaMaterialesBody.innerHTML = '';
+          if (materiales.length === 0) {
+            mensajeLista.textContent = 'No hay materiales registrados.';
+          } else {
+            mensajeLista.textContent = '';
+            materiales.forEach(material => {
+              const row = tablaMaterialesBody.insertRow();
+              row.insertCell().textContent = material.nombrePersona;
+              row.insertCell().textContent = material.tipoMaterial;
+              row.insertCell().textContent = material.cantidad;
+              row.insertCell().textContent = material.dia;
+              row.insertCell().textContent = new Date(material.fecha).toLocaleDateString();
+              row.insertCell().textContent = material.puntoRecoleccion;
+            });
+          }
+        } catch (err) {
+          console.error('Error al cargar materiales:', err);
+          mensajeLista.textContent = 'Error al cargar materiales.';
+        }
+      }
+
+      document.getElementById('formAgregar').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const datos = {
+          nombrePersona: document.getElementById('nombrePersonaAgregar').value,
+          tipoMaterial: document.getElementById('tipoMaterialAgregar').value,
+          cantidad: parseInt(document.getElementById('cantidadAgregar').value),
+          dia: document.getElementById('diaAgregar').value,
+          fecha: document.getElementById('fechaAgregar').value,
+          puntoRecoleccion: document.getElementById('puntoRecoleccionAgregar').value
+        };
+        const res = await fetch('/api/materiales', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(datos)
+        });
+        const result = await res.json();
+        alert(result.message);
+        cargarMateriales();
+        document.getElementById('formAgregar').querySelector('form').reset(); // Clear form
+      });
+
+      document.getElementById('formActualizar').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const datos = {
+          nombrePersona: document.getElementById('nombrePersonaActualizar').value,
+          tipoMaterial: document.getElementById('tipoMaterialActualizar').value,
+          cantidad: parseInt(document.getElementById('cantidadActualizar').value),
+          dia: document.getElementById('diaActualizar').value,
+          fecha: document.getElementById('fechaActualizar').value,
+          puntoRecoleccion: document.getElementById('puntoRecoleccionActualizar').value
+        };
+        const res = await fetch('/api/materiales', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(datos)
+        });
+        const result = await res.json();
+        alert(result.message);
+        cargarMateriales();
+        document.getElementById('formActualizar').querySelector('form').reset(); // Clear form
+      });
+
+      document.getElementById('formEliminar').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const nombrePersona = document.getElementById('nombrePersonaEliminar').value;
+        const tipoMaterial = document.getElementById('tipoMaterialEliminar').value;
+        const res = await fetch(`/api/materiales/${nombrePersona}/${tipoMaterial}`, {
+          method: 'DELETE'
+        });
+        const result = await res.json();
+        alert(result.message);
+        cargarMateriales();
+        document.getElementById('formEliminar').querySelector('form').reset(); // Clear form
+      });
+
+      cargarMateriales();
+    });
+  </script>
+</body>
+</html>
+
